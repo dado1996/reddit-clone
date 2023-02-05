@@ -71,6 +71,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
   const [error, setError] = useState(false);
 
   const handleCreatePost = async () => {
+    setError(false);
     const { communityId } = router.query;
     // Create new post object => type Post
     const newPost: Post = {
@@ -102,15 +103,15 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
           });
         });
       }
+
+      // Redirect the user back to the community page using the router
+      router.back();
     } catch (error: any) {
       console.log("handle create post error", error);
       setError(true);
     } finally {
       setLoading(false);
     }
-
-    // Redirect the user back to the community page using the router
-    // router.back();
   };
 
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
