@@ -5,6 +5,7 @@ import {
   AlertTitle,
   Flex,
   Icon,
+  useToast,
 } from "@chakra-ui/react";
 import { BsLink45Deg, BsMic } from "react-icons/bs";
 import { IoDocumentText, IoImageOutline } from "react-icons/io5";
@@ -60,6 +61,7 @@ export type TabItemType = {
 };
 
 const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
+  const toast = useToast();
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState(formTabs[0].title);
   const [textInputs, setTextsInputs] = useState({
@@ -106,6 +108,13 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
 
       // Redirect the user back to the community page using the router
       router.back();
+      toast({
+        title: "Great!",
+        description: "Post published",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
     } catch (error: any) {
       console.log("handle create post error", error);
       setError(true);

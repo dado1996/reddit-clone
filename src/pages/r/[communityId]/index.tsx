@@ -1,4 +1,5 @@
-import { Community } from "@/atoms/communitiesAtom";
+import { Community, communityState } from "@/atoms/communitiesAtom";
+import About from "@/components/Community/About";
 import CreatePostLink from "@/components/Community/CreatePostLink";
 import Header from "@/components/Community/Header";
 import CommunityNotFound from "@/components/Community/NotFound";
@@ -7,6 +8,9 @@ import Posts from "@/components/Posts/Posts";
 import { firestore } from "@/firebase/clientApp";
 import { doc, getDoc } from "firebase/firestore";
 import { GetServerSidePropsContext } from "next";
+import Head from "next/head";
+import { useEffect } from "react";
+import { useSetRecoilState } from "recoil";
 import safeJsonStringify from "safe-json-stringify";
 
 type CommunityPageProps = {
@@ -14,12 +18,24 @@ type CommunityPageProps = {
 };
 
 const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
+  const setCommunityStateValue = useSetRecoilState(communityState);
   if (!communityData) {
     return <CommunityNotFound />;
   }
 
+  useEffect(() => {
+    setCommunityStateValue((prev) => ({
+      ...prev,
+      currentCommunity: communityData,
+    }));
+  }, [communityData]);
+
   return (
     <>
+      <Head>
+        <title>{communityData.id}</title>
+        <link ref="shortcut icon" href="/public/images/redditFace.svg" />
+      </Head>
       <Header communityData={communityData} />
       <PageContent>
         <>
@@ -27,7 +43,7 @@ const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
           <Posts communityData={communityData} />
         </>
         <>
-          <h1>Right</h1>
+          <About communityData={communityData} />
         </>
       </PageContent>
     </>

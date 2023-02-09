@@ -1,7 +1,7 @@
 import { Community } from "@/atoms/communitiesAtom";
 import useCommunityData from "@/hooks/useCommunityData";
-import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
-import Image from "next/image";
+import { Box, Button, Flex, Icon, Image, Text } from "@chakra-ui/react";
+import { useState } from "react";
 import { FaReddit } from "react-icons/fa";
 
 type HeaderProps = {
@@ -15,13 +15,24 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
     (item) => item.communityId === communityData.id
   );
 
+  const [isHovering, setIsHovering] = useState(false);
+
   return (
     <Flex direction="column" width="100%" height="146px">
       <Box height="50%" bg="blue.400" />
       <Flex justify="center" bg="white" flexGrow={1}>
         <Flex width="95%" maxWidth="860px">
-          {communityData.imageURL ? (
-            <Image src="" alt="logo" />
+          {communityStateValue.currentCommunity?.imageURL ? (
+            <Image
+              src={communityStateValue.currentCommunity.imageURL}
+              alt={communityStateValue.currentCommunity.id}
+              borderRadius="full"
+              boxSize="66px"
+              position="relative"
+              top={-3}
+              color="blue.500"
+              border="4px solid white"
+            />
           ) : (
             <Icon
               as={FaReddit}
@@ -46,8 +57,10 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
               pl={6}
               onClick={() => onJoinOrLeaveCommunity(communityData, isJoined)}
               isLoading={loading}
+              onMouseOver={() => setIsHovering(true)}
+              onMouseOut={() => setIsHovering(false)}
             >
-              {isJoined ? "Joined" : "Join"}
+              {isJoined ? (isHovering ? "Leave" : "Joined") : "Join"}
             </Button>
           </Flex>
         </Flex>

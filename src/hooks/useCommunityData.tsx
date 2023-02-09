@@ -5,6 +5,7 @@ import {
   communityState,
 } from "@/atoms/communitiesAtom";
 import { auth, firestore } from "@/firebase/clientApp";
+import { useToast } from "@chakra-ui/react";
 import {
   collection,
   doc,
@@ -23,6 +24,7 @@ const useCommunityData = () => {
     useRecoilState(communityState);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const toast = useToast();
 
   const onJoinOrLeaveCommunity = (
     communityData: Community,
@@ -94,6 +96,10 @@ const useCommunityData = () => {
         ...prev,
         mySnippets: [...prev.mySnippets, newSnippet],
       }));
+      toast({
+        status: "success",
+        description: `Succesfully joined r/${communityData.id}`,
+      });
     } catch (e: any) {
       console.log("join community error", e);
     } finally {
@@ -122,6 +128,11 @@ const useCommunityData = () => {
           (item) => item.communityId !== communityId
         ),
       }));
+
+      toast({
+        status: "success",
+        description: `Succesfully left r/${communityId}`,
+      });
     } catch (error: any) {
       console.log("leaving community error", error);
     } finally {
@@ -130,7 +141,13 @@ const useCommunityData = () => {
   };
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setCommunityStateValue((prev) => ({
+        ...prev,
+        mySnippets: [],
+      }));
+      return;
+    }
     getMySnippets();
   }, [user]);
 
