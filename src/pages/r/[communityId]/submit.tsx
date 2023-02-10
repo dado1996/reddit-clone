@@ -3,6 +3,7 @@ import About from "@/components/Community/About";
 import PageContent from "@/components/Layout/PageContent";
 import NewPostForm from "@/components/Posts/NewPostForm";
 import { auth, firestore } from "@/firebase/clientApp";
+import useCommunityData from "@/hooks/useCommunityData";
 import { Box, Flex, Spinner } from "@chakra-ui/react";
 import { doc, getDoc } from "firebase/firestore";
 import { GetServerSidePropsContext } from "next";
@@ -11,13 +12,11 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilValue } from "recoil";
 import safeJsonStringify from "safe-json-stringify";
 
-type SubmitProps = {
-  communityData: Community;
-};
-
-const Submit: React.FC<SubmitProps> = ({ communityData }) => {
+const Submit: React.FC = () => {
   const [user] = useAuthState(auth);
-  const communityStateValue = useRecoilValue(communityState);
+  // const communityStateValue = useRecoilValue(communityState);
+  const { communityStateValue } = useCommunityData();
+
   return (
     <PageContent>
       <>
@@ -34,38 +33,11 @@ const Submit: React.FC<SubmitProps> = ({ communityData }) => {
           </Flex>
         )}
       </>
-      <About communityData={communityData} />
+      {communityStateValue.currentCommunity && (
+        <About communityData={communityStateValue.currentCommunity} />
+      )}
     </PageContent>
   );
 };
-
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  // Get community data
-  try {
-    const communityDocRef = doc(
-      firestore,
-      "communities",
-      context.query.communityId as string
-    );
-    const communityDoc = await getDoc(communityDocRef);
-
-    return {
-      props: {
-        communityData: communityDoc.exists()
-          ? JSON.parse(
-              safeJsonStringify({ id: communityDoc.id, ...communityDoc.data() })
-            )
-          : "",
-      },
-    };
-  } catch (error: any) {
-    console.error("getServerSideProps error", error);
-    return {
-      props: {
-        communityData: {},
-      },
-    };
-  }
-}
 
 export default Submit;
