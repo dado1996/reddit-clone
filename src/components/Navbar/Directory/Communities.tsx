@@ -1,24 +1,23 @@
 import { communityState, CommunitySnippet } from "@/atoms/communitiesAtom";
 import CreateCommunityModal from "@/components/Modal/Auth/CreateCommunityModal";
-import { Flex, MenuItem, Icon, MenuDivider, MenuGroup } from "@chakra-ui/react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { Flex, MenuItem, Icon, Box, Text } from "@chakra-ui/react";
+import { useState } from "react";
 import { FaReddit } from "react-icons/fa";
 import { GrAdd } from "react-icons/gr";
 import { useRecoilValue } from "recoil";
-import useCommunityData from "@/hooks/useCommunityData";
+import MenuListItem from "./MenuListItem";
 
 const Communities: React.FC = () => {
-  const { communityStateValue } = useCommunityData();
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const mySnippets = useRecoilValue(communityState).mySnippets;
 
   return (
     <>
       <CreateCommunityModal open={open} handleClose={() => setOpen(false)} />
-      <MenuGroup title="YOUR COMMUNITIES" color="gray.500">
+      <Box mt={3} mb={4}>
+        <Text pl={3} mb={1} fontSize="7pt" fontWeight={600} color="gray.500">
+          MODERATING
+        </Text>
         <MenuItem
           width="100%"
           fontSize="10pt"
@@ -30,29 +29,34 @@ const Communities: React.FC = () => {
             Create Community
           </Flex>
         </MenuItem>
-        {mySnippets.map((c) => (
-          <MenuItem
-            key={c.communityId}
-            width="100%"
-            fontSize="10pt"
-            _hover={{ bg: "gray.100" }}
-            onClick={() => router.push(`/r/${c.communityId}`)}
-          >
-            <Link href={`/r/${c.communityId}`}>
-              <Flex align="center">
-                <Icon
-                  as={FaReddit}
-                  boxSize="2rem"
-                  borderRadius="full"
-                  mr="12px"
-                />
-                {c.communityId}
-              </Flex>
-            </Link>
-          </MenuItem>
+        {mySnippets
+          .filter((snippet) => snippet.isModerator)
+          .map((snippet) => (
+            <MenuListItem
+              key={snippet.communityId}
+              displayText={`r/${snippet.communityId}`}
+              link={`/r/${snippet.communityId}`}
+              icon={FaReddit}
+              iconColor="blue.500"
+              imageURL={snippet.imageURL}
+            />
+          ))}
+      </Box>
+      <Box mt={3} mb={4}>
+        <Text pl={3} mb={1} fontSize="7pt" fontWeight={600} color="gray.500">
+          MY COMMUNITIES
+        </Text>
+        {mySnippets.map((snippet) => (
+          <MenuListItem
+            key={snippet.communityId}
+            displayText={`r/${snippet.communityId}`}
+            link={`/r/${snippet.communityId}`}
+            icon={FaReddit}
+            iconColor="blue.500"
+            imageURL={snippet.imageURL}
+          />
         ))}
-      </MenuGroup>
-      <MenuDivider />
+      </Box>
     </>
   );
 };

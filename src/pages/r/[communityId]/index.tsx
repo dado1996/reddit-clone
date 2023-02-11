@@ -34,7 +34,7 @@ const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
     <>
       <Head>
         <title>{communityData.id}</title>
-        <link ref="shortcut icon" href="/public/images/redditFace.svg" />
+        <link rel="shortcut icon" href="/images/redditFace.svg" />
       </Head>
       <Header communityData={communityData} />
       <PageContent>

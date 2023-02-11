@@ -30,6 +30,7 @@ import { getDownloadURL, ref, uploadString } from "firebase/storage";
 
 type NewPostFormProps = {
   user: User;
+  communityImageURL?: string;
 };
 
 const formTabs: TabItemType[] = [
@@ -60,7 +61,10 @@ export type TabItemType = {
   icon: typeof Icon.arguments;
 };
 
-const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
+const NewPostForm: React.FC<NewPostFormProps> = ({
+  user,
+  communityImageURL,
+}) => {
   const toast = useToast();
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState(formTabs[0].title);
@@ -78,6 +82,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
     // Create new post object => type Post
     const newPost: Post = {
       communityId: communityId as string,
+      communityImageURL: communityImageURL || "",
       creatorId: user?.uid,
       creatorDisplayName: user.email!.split("@")[0],
       title: textInputs.title,

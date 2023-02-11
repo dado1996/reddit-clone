@@ -22,11 +22,14 @@ const Submit: React.FC = () => {
       <>
         <Head>
           <title>Submit to Reddit</title>
-          <link ref="shortcut icon" href="/public/images/redditFace.svg" />
+          <link rel="shortcut icon" href="/images/redditFace.svg" />
         </Head>
         <Box p="14px 0" borderBottom="1px solid" borderColor="white"></Box>
         {user ? (
-          <NewPostForm user={user} />
+          <NewPostForm
+            user={user}
+            communityImageURL={communityStateValue.currentCommunity?.imageURL}
+          />
         ) : (
           <Flex justify="center" align="center">
             <Spinner size="xl" />
